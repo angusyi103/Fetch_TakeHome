@@ -1,21 +1,21 @@
-//
-//  RecipesViewModel.swift
-//  Fetch_Take_Home
-//
-//  Created by angusyi on 11/24/24.
-//
-
 import Foundation
 import Combine
 
 final class RecipeViewModel: ObservableObject {
     @Published var recipes: [Recipe] = []
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+    @Published var errorMessage: String? {
+        didSet {
+            if let error = errorMessage {
+                print("Error: \(error)") 
+            }
+        }
+    }
 
     private var cancellables = Set<AnyCancellable>()
 
     func fetchRecipes(from urlString: String) {
+        print("Fetching from URL: \(urlString)")
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid URL"
             return

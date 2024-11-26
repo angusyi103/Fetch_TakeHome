@@ -1,141 +1,92 @@
-//
-//  ContentView.swift
-//  Fetch_Take_Home
-//
-//  Created by angusyi on 11/21/24.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = RecipeViewModel()
     
-    // Allow endpoint switching for testing different scenarios
     private let endpoints = [
         "All Recipes": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json",
         "Malformed Data": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-malformed.json",
         "Empty Data": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json"
     ]
+    
     @State private var selectedEndpoint: String = "All Recipes"
+    @State private var selectedCuisine: String = "All Cuisines"
+    
+    var cuisines: [String] {
+        let allCuisines = viewModel.recipes.map { $0.cuisine }
+        return ["All Cuisines"] + Array(Set(allCuisines)).sorted()
+    }
+    
+    var filteredRecipes: [Recipe] {
+        if selectedCuisine == "All Cuisines" {
+            return viewModel.recipes
+        }
+        return viewModel.recipes.filter { $0.cuisine == selectedCuisine }
+    }
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                // Dropdown to select endpoint
-                Picker("Test Scenario", selection: $selectedEndpoint) {
-                    ForEach(endpoints.keys.sorted(), id: \.self) { key in
-                        Text(key).tag(key)
+            VStack {
+                HStack {
+                    Spacer()
+                    Picker("Select Cuisine", selection: $selectedCuisine) {
+                        ForEach(cuisines, id: \.self) { cuisine in
+                            Text(cuisine).tag(cuisine)
+                        }
                     }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding()
-                .onChange(of: selectedEndpoint) { newValue in
-                    if let url = endpoints[newValue] {
-                        viewModel.fetchRecipes(from: url)
-                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .tint(.gray)
+                    .frame(height: 20)
+                    .padding(.trailing)
                 }
                 
                 Group {
                     if viewModel.isLoading {
                         ProgressView("Loading...")
                             .padding()
-                    } else if let errorMessage = viewModel.errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                            .multilineTextAlignment(.center)
-                            .padding()
-                    } else if viewModel.recipes.isEmpty {
-                        VStack {
-                            Spacer()
+                    }
+                    
+                    List {
+                        if let _ = viewModel.errorMessage {
+                            Text("Could Not Load Data. Please Try Again.")
+                                .foregroundColor(.red)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                        }
+                        else if viewModel.recipes.isEmpty {
                             Text("No recipes found.")
                                 .foregroundColor(.secondary)
                                 .padding()
-                            Spacer()
                         }
-                    } else {
-                        List(viewModel.recipes) { recipe in
-                            RecipeRow(recipe: recipe)
+                        else {
+                            ForEach(filteredRecipes) { recipe in
+                                RecipeRow(recipe: recipe)
+                            }
                         }
-                        .listStyle(PlainListStyle())
+                    }
+                    .listStyle(PlainListStyle())
+                    .refreshable {
+                        switchEndpoint()
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .navigationTitle("Recipes")
             .onAppear {
-                if let url = endpoints[selectedEndpoint] {
-                    viewModel.fetchRecipes(from: url)
-                }
+                viewModel.fetchRecipes(from: endpoints[selectedEndpoint] ?? "")
+            }
+            .onChange(of: selectedEndpoint) { newValue in
+                viewModel.fetchRecipes(from: endpoints[newValue] ?? "")
             }
         }
     }
-}
-
-struct RecipeRow: View {
-    let recipe: Recipe
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 1) {
-            HStack {
-                if let smallPhoto = recipe.photoURLSmall, let url = URL(string: smallPhoto) {
-                    AsyncImage(url: url) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 80, height: 80)
-                                .clipShape(Circle())
-                        } else if phase.error != nil {
-                            Color.red.frame(width: 100, height: 100)
-                        } else {
-                            ProgressView().frame(width: 100, height: 100)
-                        }
-                    }
-                }
-                
-                VStack(alignment: .leading) {
-                    Text(recipe.name)
-                        .font(.headline)
-                    Text(recipe.cuisine)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            HStack {
-                Spacer()
-                
-                if let sourceURL = recipe.sourceURL, let url = URL(string: sourceURL) {
-                    Button(action: {
-                        UIApplication.shared.open(url)
-                    }) {
-                        Text("View Recipe")
-                            .font(.footnote)
-                            .foregroundColor(.blue)
-                            .padding(.trailing, 10)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-                
-                // YouTube Button
-                if let youtubeURL = recipe.youtubeURL, let url = URL(string: youtubeURL) {
-                    Button(action: {
-                        UIApplication.shared.open(url)
-                    }) {
-                        HStack(spacing: 3) {
-                            Image(systemName: "play.rectangle.fill")
-                                .foregroundColor(.red)
-                            Text("YouTube")
-                                .font(.footnote)
-                                .foregroundColor(.red)
-                        }
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
+    private func switchEndpoint() {
+        let endpointKeys = Array(endpoints.keys)
+        if let currentIndex = endpointKeys.firstIndex(of: selectedEndpoint) {
+            let nextIndex = (currentIndex + 1) % endpointKeys.count
+            selectedEndpoint = endpointKeys[nextIndex]
         }
-        .padding(.vertical, 8)
-        
     }
 }
 

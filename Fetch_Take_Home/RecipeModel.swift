@@ -8,7 +8,7 @@
 import Foundation
 
 struct RecipesResponse: Codable {
-    let recipes: [Recipe] // Matches the key "recipes" in the JSON
+    let recipes: [Recipe]
 }
 
 struct Recipe: Codable, Identifiable {
