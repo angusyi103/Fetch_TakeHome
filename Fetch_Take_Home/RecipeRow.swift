@@ -55,12 +55,17 @@ struct RecipeRow: View {
                     Button(action: {
                         UIApplication.shared.open(url)
                     }) {
-                        Text("View Recipe")
-                            .font(.footnote)
-                            .foregroundColor(.blue)
-                            .padding(.trailing, 10)
+                        HStack(spacing: 8) {
+                            Image(systemName: "book.fill")
+                                .font(.footnote)
+                                .foregroundColor(.white)
+                            
+                            Text("View Recipe")
+                                .font(.footnote)
+                        }
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color.blue.opacity(0.9))
                 }
                 
                 // YouTube Button
@@ -68,15 +73,17 @@ struct RecipeRow: View {
                     Button(action: {
                         UIApplication.shared.open(url)
                     }) {
-                        HStack(spacing: 3) {
+                        HStack(spacing: 8) {
                             Image(systemName: "play.rectangle.fill")
-                                .foregroundColor(.red)
+                                .font(.footnote)
+                                .foregroundColor(.white)
+                            
                             Text("YouTube")
                                 .font(.footnote)
-                                .foregroundColor(.red)
                         }
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color.red.opacity(0.9))
                 }
             }
         }
