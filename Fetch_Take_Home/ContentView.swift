@@ -3,13 +3,6 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = RecipeViewModel()
     
-    private let endpoints = [
-        "All Recipes": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json",
-        "Malformed Data": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-malformed.json",
-        "Empty Data": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json"
-    ]
-    
-    @State private var selectedEndpoint: String = "All Recipes"
     @State private var selectedCuisine: String = "All Cuisines"
     
     var cuisines: [String] {
@@ -68,26 +61,16 @@ struct ContentView: View {
                     }
                     .listStyle(PlainListStyle())
                     .refreshable {
-                        switchEndpoint()
+                        viewModel.switchEndpoint()
+                        await viewModel.fetchRecipes(for: viewModel.selectedEndpoint)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .navigationTitle("Recipes")
-            .onAppear {
-                viewModel.fetchRecipes(from: endpoints[selectedEndpoint] ?? "")
+            .task {
+                await viewModel.fetchRecipes(for: viewModel.selectedEndpoint)
             }
-            .onChange(of: selectedEndpoint) { newValue in
-                viewModel.fetchRecipes(from: endpoints[newValue] ?? "")
-            }
-        }
-    }
-    
-    private func switchEndpoint() {
-        let endpointKeys = Array(endpoints.keys)
-        if let currentIndex = endpointKeys.firstIndex(of: selectedEndpoint) {
-            let nextIndex = (currentIndex + 1) % endpointKeys.count
-            selectedEndpoint = endpointKeys[nextIndex]
         }
     }
 }

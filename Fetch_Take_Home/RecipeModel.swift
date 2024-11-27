@@ -31,4 +31,14 @@ struct Recipe: Codable, Identifiable {
         case sourceURL = "source_url"
         case youtubeURL = "youtube_url"
     }
+    
+    init(uuid: String, name: String, cuisine: String, photoURLLarge: String? = nil, photoURLSmall: String? = nil, sourceURL: String? = nil, youtubeURL: String? = nil) {
+        self.uuid = uuid
+        self.name = name
+        self.cuisine = cuisine
+        self.photoURLLarge = photoURLLarge
+        self.photoURLSmall = photoURLSmall
+        self.sourceURL = sourceURL
+        self.youtubeURL = youtubeURL
+    }
 }

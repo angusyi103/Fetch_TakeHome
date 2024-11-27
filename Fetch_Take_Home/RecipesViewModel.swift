@@ -1,22 +1,32 @@
 import Foundation
-import Combine
 
 final class RecipeViewModel: ObservableObject {
     @Published var recipes: [Recipe] = []
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String? {
-        didSet {
-            if let error = errorMessage {
-                print("Error: \(error)") 
-            }
+    @Published var errorMessage: String?
+    @Published var selectedEndpoint: String = "All Recipes"
+    
+    private let endpoints = [
+        "All Recipes": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json",
+        "Malformed Data": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-malformed.json",
+        "Empty Data": "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json"
+    ]
+    
+    @MainActor
+    func fetchRecipes(for selectedEndpoint: String) async {
+        guard let urlString = endpoints[selectedEndpoint] else {
+            errorMessage = "Invalid endpoint"
+            return
         }
-    }
-
-    private var cancellables = Set<AnyCancellable>()
-
-    func fetchRecipes(from urlString: String) {
+        
         print("Fetching from URL: \(urlString)")
-        guard let url = URL(string: urlString) else {
+        
+        guard !urlString.isEmpty else {
+            errorMessage = "URL is empty"
+            return
+        }
+        
+        guard let url = URL(string: urlString), let _ = url.scheme, let _ = url.host else {
             errorMessage = "Invalid URL"
             return
         }
@@ -24,22 +34,25 @@ final class RecipeViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
 
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map(\.data)
-            .decode(type: RecipesResponse.self, decoder: JSONDecoder())
-            .map(\.recipes)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.isLoading = false
-                switch completion {
-                case .failure(let error):
-                    self?.errorMessage = "Failed to load: \(error.localizedDescription)"
-                case .finished:
-                    break
-                }
-            }, receiveValue: { [weak self] recipes in
-                self?.recipes = recipes
-            })
-            .store(in: &cancellables)
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let decodedResponse = try JSONDecoder().decode(RecipesResponse.self, from: data)
+            
+            // Updates will automatically happen on the main thread due to @MainActor
+            self.recipes = decodedResponse.recipes
+            self.isLoading = false
+        } catch {
+            errorMessage = "Failed to load: \(error.localizedDescription)"
+            isLoading = false
+        }
+    }
+    
+    // Move the endpoint switch logic here
+    func switchEndpoint() {
+        let endpointKeys = Array(endpoints.keys)
+        if let currentIndex = endpointKeys.firstIndex(of: selectedEndpoint) {
+            let nextIndex = (currentIndex + 1) % endpointKeys.count
+            selectedEndpoint = endpointKeys[nextIndex]
+        }
     }
 }
