@@ -59,8 +59,10 @@ struct ContentView: View {
                                 .padding()
                         }
                         else {
-                            ForEach(filteredRecipes) { recipe in
-                                RecipeRow(recipe: recipe)
+                            LazyVStack {
+                                ForEach(filteredRecipes) { recipe in
+                                    RecipeRow(recipe: recipe)
+                                }
                             }
                         }
                     }

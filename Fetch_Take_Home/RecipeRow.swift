@@ -6,44 +6,37 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct RecipeRow: View {
     let recipe: Recipe
-    
-    @State private var imageFetched = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
             HStack {
                 if let smallPhoto = recipe.photoURLSmall, let url = URL(string: smallPhoto) {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .gray))
-                                .frame(width: 80, height: 80)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 80, height: 80)
-                                .clipShape(Circle())
-                                .onAppear {
-                                    imageFetched = true
-                                }
-                        case .failure(_):
-                            Image(systemName: "photo.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
-                                .foregroundColor(.gray)
-                        @unknown default:
-                            EmptyView()
-                        }
+                    WebImage(url: url) { image in
+                        image.resizable()
+                    } placeholder: {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .gray))
+                            .frame(width: 80, height: 80)
                     }
-                    .onChange(of: recipe.photoURLSmall) { _ in
-                        imageFetched = false
+                    .onSuccess { image, data, cacheType in
+                        print("Image loaded: \(image), Cache type: \(cacheType == .disk ? "from cache" : "from network")")
                     }
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 80, height: 80)
+                    .clipShape(Circle())
+                    
+                    
+                } else {
+                    Image(systemName: "photo.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 80, height: 80)
+                        .foregroundColor(.gray)
                 }
                 
                 VStack(alignment: .leading) {

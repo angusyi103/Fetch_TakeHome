@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A08155DE2CF686E000D85B07 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = A08155DD2CF686E000D85B07 /* SDWebImageSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		A08155A32CEFA47300D85B07 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A08155DE2CF686E000D85B07 /* SDWebImageSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = Fetch_Take_Home;
 			packageProductDependencies = (
+				A08155DD2CF686E000D85B07 /* SDWebImageSwiftUI */,
 			);
 			productName = Fetch_Take_Home;
 			productReference = A08155922CEFA47100D85B07 /* Fetch_Take_Home.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = A08155892CEFA47100D85B07;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A08155DC2CF686C600D85B07 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A08155932CEFA47100D85B07 /* Products */;
 			projectDirPath = "";
@@ -554,6 +563,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A08155DC2CF686C600D85B07 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A08155DD2CF686E000D85B07 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A08155DC2CF686C600D85B07 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A081558A2CEFA47100D85B07 /* Project object */;
 }
