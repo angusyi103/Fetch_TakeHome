@@ -64,13 +64,13 @@ In this project, I made a few trade-offs to ensure timely completion and a balan
 ## Weakest Part of the Project: What do you think is the weakest part of your project?
 The weakest part of the project lies in the testing. While I have implemented tests to verify key functionalities, they are not exhaustive and do not cover every potential scenario that could occur in a real-world application.
 
-* UI Design Expertise:** While the functionality of the project is solid, UI design is not my area of expertise. Although the interface is functional and fulfills its purpose, it lacks creativity and refined aesthetics. Creating visually engaging designs remains a challenge for me, and the current UI could benefit from more innovative design elements.
+* UI Design Approach: I acknowledge that UI design is not my area of expertise, so I focused on creating a simple and intuitive interface that prioritizes ease of use. While the design may not be highly creative or visually intricate, my goal was to ensure that users can interact with the app effortlessly and without confusion.
 
-* Limited Test Coverage:** The test cases cover basic scenarios, such as fetching valid data, handling malformed or empty data, and invalid URLs. However, they do not address edge cases like network latency, large data sets, or unexpected server behaviors, which are critical for ensuring robustness in real-world applications.
+* Limited Test Coverage: I identified that the test cases primarily cover basic scenarios, such as fetching valid data, handling malformed or empty data, and invalid URLs, but they do not account for edge cases like network latency, large data sets, or unexpected server behaviors. Recognizing this limitation, I made an effort to address it by focusing on the most critical scenarios to improve the reliability of the application. However, further testing would be beneficial for better coverage.
 
-* Mocking Dependencies:** Tests are dependent on actual endpoints, as there is no mocking of API responses or external dependencies. This reliance on live endpoints means tests could fail if the API changes or the network is unavailable, reducing reliability and reproducibility.
+* Mocking Dependencies: I recognized that the tests were dependent on actual endpoints without mocking API responses or external dependencies. This reliance on live endpoints could lead to test failures if the API changes or the network is unavailable. To address this, I focused on testing with real data, but I acknowledge that implementing mocks for better test reliability and reproducibility would be an important next step.
 
-* Asynchronous Handling in Tests:** While asynchronous operations are addressed in tests such as `testFetchRecipesSuccess` and `testFetchRecipesMalformedData`, these tests could be more robust. Incorporating mock data sources, handling timeouts properly, and ensuring that all asynchronous scenarios are well-tested would improve overall reliability.
+* Asynchronous Handling in Tests: While I addressed asynchronous operations in tests like `testFetchRecipesSuccess` and `testFetchRecipesMalformedData`, I recognized that these tests could be more robust. To improve reliability, I plan to incorporate mock data sources, handle timeouts more effectively, and ensure that all potential asynchronous scenarios are properly tested in the future.
 
 ## External Code and Dependencies: Did you use any external code, libraries, or dependencies?
 This project uses the SDWebImageSwiftUI library for caching downloaded images.
