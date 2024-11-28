@@ -1,13 +1,16 @@
 # Fetch_TakeHome
 
-This repository contains the code for the Fetch Take Home project. Below are the steps to run the project on your local machine using Xcode for iOS development.
+## About The Project
+
+This repository hosts the code for the Fetch Take Home Project, a Swift-based iOS application designed for efficient data fetching and presentation. Below, you’ll find instructions to set up and run the project on your local machine using Xcode.
+
+Check out the screenshots below to see the app
+
+![App Screenshot](screenshot.png)
 
 ---
 
 ## Getting Started
-
-Follow these instructions to set up and run the project on your local iOS simulator.
-
 ### Prerequisites
 
 - macOS with **Xcode** installed
